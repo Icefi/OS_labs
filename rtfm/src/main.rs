@@ -4,10 +4,10 @@ use std::env;
 
 fn rtfm_create_file (arg: &String) {
     println!("create file {}", arg);
-
+    
     let file = match File::create(arg) {
         Err(why) => panic!("Cannot create file \"{}\": \"{}\"", arg, why),
-        Ok(file) => file,
+        Ok(file) => println!("Successully created file \"{}\"", arg),
     };
 }
 
@@ -15,7 +15,7 @@ fn rtfm_create_dir (arg: &String) {
     println!("create dir {}", arg);
 
     match fs::create_dir(arg) {
-        Err(why) => panic!("Cannot create file \"{}\": \"{}\"", display, why),
+        Err(why) => panic!("Cannot create file \"{}\": \"{}\"", arg, why),
         Ok(()) => println!("Successfully created dir {}", arg),
     };
 }
@@ -25,16 +25,16 @@ fn rtfm_delete_file (arg: &String) {
 
     match fs::remove_file(arg) {
         Err(why) => panic!("Cannot delete file \"{}\": \"{}\"", arg, why),
-        Ok(()) => file,
+        Ok(()) => println!("Successfully deleted file \"{}\"", arg),
     };
 }
 
 fn rtfm_delete_dir (arg: &String) {
-    println!("delete dir {}", arg);
+    println!("delete file {}", arg);
 
     match fs::remove_dir(arg) {
         Err(why) => panic!("Cannot delete file \"{}\": \"{}\"", arg, why),
-        Ok(())) => println!("Successfully deleted dir {}", arg),
+        Ok(()) => println!("Successfully deleted dir \"{}\"", arg),
     };
 }
 
@@ -106,7 +106,7 @@ fn main() {
             match &cmd[..] {
                 "--copy" => { rtfm_copy_file (arg1, arg2); }
                 "--rename" => { rtfm_rename_file (arg1, arg2); }
-                "--move" => { rtfm_move_file (arg1, arg2); }
+                //"--move" => { rtfm_move_file (arg1, arg2); }
                 _ => { eprintln!("Undefined command {}", cmd); usage(); }
             }
         }
