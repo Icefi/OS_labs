@@ -78,7 +78,16 @@ fn rtfm_hard_link (arg1: &String, arg2: &String) {
     match fs::hard_link(arg1, arg2) {
         Err(why) => panic!("Cannot create hard link {} in {}: {}", arg2, arg1, why),
         Ok(_) => println!("Successfully created hard link {} in {}", arg2, arg1),
-    };
+    }
+}
+
+fn rtfm_sym_link (arg1: &String, arg2: &String) {
+    println!("Create hard link {} in {}", arg2, arg2);
+
+    match std::os::unix::fs::symlink(arg1, arg2) {
+        Err(why) => panic!("Cannot create soft link {} in {}: {}", arg2, arg1, why),
+        Ok(_) => println!("Successfully created soft link {} in {}", arg2, arg1),
+    }
 }
 
 fn rtfm_show_entries (arg: &String) {
@@ -92,16 +101,17 @@ fn rtfm_show_entries (arg: &String) {
 fn usage() {
     println!(
         "Usage:
-        \n\t--create-file <file_name> to create new file
-        \n\t--create-dir <dir_name> to create directory
-        \n\t--delete-file <file_name> to delete file
-        \n\t--delete-dir <dir_name> to delete directory
-        \n\t--show-tree <dir_name> to show all entries of directory
-        \n\t--show <file_name> to show content of the file
-        \n\t--rename <file_old_name> <file_new_name> to rename file
-        \n\t--move <file_old_path> <file_new_path> to move file
-        \n\t--copy <file_old> <file_copy> to copy file
-        \n\t--hard-link <file_linking> <file_linked>"
+        \t--create-file <file_name> to create new file
+        \t--create-dir <dir_name> to create directory
+        \t--delete-file <file_name> to delete file
+        \t--delete-dir <dir_name> to delete directory
+        \t--show-tree <dir_name> to show all entries of directory
+        \t--show <file_name> to show content of the file
+        \t--rename <file_old_name> <file_new_name> to rename file
+        \t--move <file_old_path> <file_new_path> to move file
+        \t--copy <file_old> <file_copy> to copy file
+        \t--hard-link <file_linking> <file_linked>
+        \t--soft-link <file_linking> <file_linked>"
     );
 }
 
@@ -110,37 +120,48 @@ fn main() {
     let args: Vec<String> = env::args().collect();
 
     match args.len() {
+        2 => {
+            let cmd = &args[1];
+
+            match &cmd[..] {
+                "--help" => { usage(); }
+                _ => { eprintln!("Undefined command: {}\nUse \"./rtfm --help\" to find out about arguments", cmd); }
+            }
+        }
+
         3 => { 
             let cmd = &args[1];
             let arg = &args[2];
             
             match &cmd[..] {
-                "--create-file" => { rtfm_create_file (arg); }
-                "--create-dir" => { rtfm_create_dir (arg); }
+                "--create-file" => { rtfm_create_file    (arg); }
+                "--create-dir"  => { rtfm_create_dir     (arg); }
 
-                "--delete-file" => { rtfm_delete_file (arg); }
-                "--delete-dir" => { rtfm_delete_dir (arg); }
+                "--delete-file" => { rtfm_delete_file    (arg); }
+                "--delete-dir"  => { rtfm_delete_dir     (arg); }
 
-                "--show" => { rtfm_show_from_file (arg); }
-                "--show-tree" => { rtfm_show_entries (arg); }
+                "--show"        => { rtfm_show_from_file (arg); }
+                "--show-tree"   => { rtfm_show_entries   (arg); }
 
-                _ => { eprintln!("Undefined command {}", cmd); usage(); }
-            };
+                _ => { eprintln!("Undefined command: \"{}\" with argument \"{}\" \nUse \"./rtfm --help\" to find out about arguments", cmd, arg); }
+            }
         }
 
         4 => {
-            let cmd = &args[1];
+            let cmd  = &args[1];
             let arg1 = &args[2];
             let arg2 = &args[3];
 
             match &cmd[..] {
-                "--copy" => { rtfm_copy_file (arg1, arg2); }
-                "--rename" => { rtfm_rename_file (arg1, arg2); }
-                "--move" => { rtfm_move_file (arg1, arg2); }
-                "--hard-link" => { rtfm_hard_link (arg1, arg2); }
-                _ => { eprintln!("Undefined command {}", cmd); usage(); }
-            };
+                "--copy"      => { rtfm_copy_file   (arg1, arg2); }
+                "--rename"    => { rtfm_rename_file (arg1, arg2); }
+                "--move"      => { rtfm_move_file   (arg1, arg2); }
+                "--hard-link" => { rtfm_hard_link   (arg1, arg2); }
+                "--sym-link"  => { rtfm_sym_link    (arg1, arg2); }
+
+                _ => { eprintln!("Undefined command \"{}\" with args \"{}\" \"{}\"\nUse \"./rtfm --help\" to find out about arguments", cmd, arg1, arg2); }
+            }
         }
-        _ => { usage(); }
+        _ => { eprintln!("Incorrect usage\nUse \"./rtfm --help\" to find out about arguments"); }
     }   
 }
