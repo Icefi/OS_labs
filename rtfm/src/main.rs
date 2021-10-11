@@ -16,7 +16,7 @@ fn rtfm_create_dir (arg: &String) {
 
     match fs::create_dir(arg) {
         Err(why) => panic!("Cannot create file \"{}\": \"{}\"", arg, why),
-        Ok(()) => println!("Successfully created dir {}", arg),
+        Ok(_) => println!("Successfully created dir {}", arg),
     };
 }
 
@@ -25,7 +25,7 @@ fn rtfm_delete_file (arg: &String) {
 
     match fs::remove_file(arg) {
         Err(why) => panic!("Cannot delete file \"{}\": \"{}\"", arg, why),
-        Ok(()) => println!("Successfully deleted file \"{}\"", arg),
+        Ok(_) => println!("Successfully deleted file \"{}\"", arg),
     };
 }
 
@@ -65,12 +65,16 @@ fn rtfm_rename_file (arg1: &String, arg2: &String) {
     };
 }
 
+/* two phases: copying and deleting original */
+
 fn rtfm_move_file (arg1: &String, arg2: &String) {
     println!("move {} into {}", arg1, arg2);
 
     rtfm_copy_file (arg1, arg2);
     rtfm_delete_file (arg1);
 }
+
+/* it linkes file to memory of existing file */
 
 fn rtfm_hard_link (arg1: &String, arg2: &String) {
     println!("Create hard link {} in {}", arg2, arg2);
@@ -81,6 +85,8 @@ fn rtfm_hard_link (arg1: &String, arg2: &String) {
     }
 }
 
+/* it linkes file to an existing file in a file system */
+
 fn rtfm_sym_link (arg1: &String, arg2: &String) {
     println!("Create hard link {} in {}", arg2, arg2);
 
@@ -89,6 +95,8 @@ fn rtfm_sym_link (arg1: &String, arg2: &String) {
         Ok(_) => println!("Successfully created soft link {} in {}", arg2, arg1),
     }
 }
+
+/* unwrap returns the result of function or panics if got an error */
 
 fn rtfm_show_entries (arg: &String) {
     let paths = fs::read_dir (arg).unwrap();
