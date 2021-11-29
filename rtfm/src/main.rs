@@ -1,11 +1,10 @@
 use std::fs;
-use std::fs::File;
 use std::env;
 
 fn rtfm_create_file (arg: &String) {
     println!("create file {}", arg);
 
-    match File::create(arg) {
+    match fs::File::create(arg) {
         Err(why) => panic!("Cannot create file \"{}\": \"{}\"", arg, why),
         Ok(_) => println!("Successully created file \"{}\"", arg),
     };
@@ -34,7 +33,7 @@ fn rtfm_delete_dir (arg: &String) {
 
     match fs::remove_dir(arg) {
         Err(why) => panic!("Cannot delete file \"{}\": \"{}\"", arg, why),
-        Ok(()) => println!("Successfully deleted dir \"{}\"", arg),
+        Ok(_) => println!("Successfully deleted dir \"{}\"", arg),
     };
 }
 
