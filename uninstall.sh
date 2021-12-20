@@ -2,9 +2,9 @@
 
 cd /bin
 
-sudo rm rsh
+sudo rm msh
 sudo rm rtfm
 
 cd /opt/
 sudo rm rtfm/rtfm
-sudo rm rsh/rsh
+sudo rm msh/msh

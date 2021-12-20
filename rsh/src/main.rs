@@ -8,7 +8,7 @@ use std::io::Write;
 use std::env;
 
 extern {
-    fn rsh_exec (argv: * const libc::c_char) -> libc::c_int;
+    fn rsh_exec (argv: * const libc::c_char);
 }
 
 fn remove_spaces (input: & str) -> String {
@@ -64,13 +64,12 @@ unsafe fn rsh_process(input: & String) -> i32 {
     if cmd[0] == "exit" {
         println!("RSH stopped");
         return RSHCodes::Exit as i32;
-    }
 
-    else if cmd[0] == "cd" {
+    } else if cmd[0] == "cd" {
         let new_loc: CString;
 
         match cmd.len() {
-            1 => new_loc = CString::new("/home/users").expect("RSH error: accessing location failed"),
+            1 => new_loc = CString::new("/home/").expect("RSH error: accessing location failed"),
             2 => new_loc = CString::new(cmd[1]).expect("RSH error: accessing location failed"),
             _ => {
                 println!("RSH::cd error: too many arguments");
@@ -82,15 +81,15 @@ unsafe fn rsh_process(input: & String) -> i32 {
             println!("RSH::cd error: changing location failed");
         }
         return RSHCodes::Next as i32;
-    }
 
-    else if cmd[0] == "echo" {
+    } else if cmd[0] == "echo" {
         rsh_echo(cmd[1]);
         return RSHCodes::Next as i32;
-    }
 
-    let args = CString::new(input.as_str()).expect("RSH ERROR: parsing line to CString failed!");
-    rsh_exec (args.as_ptr());
+    } else {
+        let args = CString::new(input.as_str()).expect("RSH ERROR: parsing line to CString failed!");
+        rsh_exec(args.as_ptr());
+    }
 
     return RSHCodes::Next as i32;
 }
@@ -98,12 +97,10 @@ unsafe fn rsh_process(input: & String) -> i32 {
 fn rsh_usage() {
     println!(
         "Usage:
-        \trsh to execute RustSHell"
-        //\trsh <script_name>.rsh to execute script with RustSHell"
-        //Integrated commands:"
-        //\tcd {dir} to change directory, if \"dir\" is not provided directory is changed to /home/user"
-        //\techo <message> to print message on display"
-        //\techo <message> > <file> to write message in file"
+        \trsh to execute RustSHell
+        \tcd \"dir\" to change directory, if \"dir\" is not provided directory is changed to /home/user
+        \techo <message> to print message on display
+        \techo <message> > <file> to write message in file"
     );
 }
 

@@ -1,9 +1,9 @@
 #!/bin/bash
 
-echo "INSTALLATION Rust SHell[2]"
+echo "INSTALLATION My SHell[2]"
 
-echo "INSTALLING RSH[1/2]"
-cd rsh
+echo "INSTALLING MSH[1/2]"
+cd msh
 ./install.sh
 
 echo "DONE[1/2]"
